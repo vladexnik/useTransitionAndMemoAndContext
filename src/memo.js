@@ -1,8 +1,9 @@
-import {useState, memo, PureComponent, Component} from 'react';
+import {useState, memo, PureComponent, Component, createContext, useContext} from 'react';
 import {Container} from 'react-bootstrap';
 import './App.css';
 
-
+import Form from './context/Form';
+import dataContext from './context/context';
 
 // class Form extends Component {
 //     shouldComponentUpdate(nextProps){
@@ -53,58 +54,71 @@ import './App.css';
 // }
 
 
-function propsCompare(prevProps, nextProps){
-    return prevProps.mail.name === nextProps.mail.name && prevProps.text===nextProps.text;
-}
-const Form = memo((props) => {
-    console.log('Render!')
-    return (
-        <Container>
-            <form className="w-50 border mt-5 p-3 m-auto">
-                <div className="mb-3">
-                    <label htmlFor="exampleFormControlInput1" className="form-label mt-3">Email address</label>
-                    <input value={props.mail.name} type="email" className='form-control' id="exampleFormControlInput1" placeholder="name@example.com"/>
-                    </div>
-                    <div className="mb-3">
-                    <label htmlFor="exampleFormControlTextarea1" className="form-label">Example textarea</label>
-                    <textarea value={props.text} className="form-control" id="exampleFormControlTextarea1" rows="3"></textarea>
-                </div>
-            </form>
-        </Container>
-    )
-}, propsCompare)
+
+
+
+const {Provider}=dataContext;
+console.dir(dataContext);
 
 // class InputComponent extends Component{
+
+//     static contextType=dataContext;
+
 //     render(){
 //         return (
-//             <input value={this.props.mail.name} type="email" className='form-control' id="exampleFormControlInput1" placeholder="name@example.com"/>
-//         )
+//             // <Consumer>
+//             //     {
+//             //         value=>{
+//             //             return(
+//             //                 <input 
+//             //                     value={value.mail} 
+//             //                     type="email" 
+//             //                     className='form-control' 
+//             //                     id="exampleFormControlInput1" 
+//             //                     placeholder="name@example.com"
+//             //                 />
+//             //             )
+//             //         }
+//             //     }
+//             // </Consumer>
+
+//             <input 
+//                 value={this.context.mail} 
+//                 type="email" 
+//                 className='form-control' 
+//                 id="exampleFormControlInput1" 
+//                 placeholder="name@example.com"
+//             />
+//             )
 //     }
 // }
 
+
+
+
 function App() {
     const [data, setData] = useState({
-        mail: {
-            name: "name@example.com"
-        },
-        text: 'another text'
+        mail: 'name@example.com',
+        text: 'another text',
+        forceChangeMail: forceChangeMail
     });
 
-   
+    function forceChangeMail(){
+        setData({...data, mail: 'forceChange@gamil.com'})
+    }
 
     return (
-        <>
-            <Form mail={data.mail} text={data.text} />
+        <Provider value={data}>
+            <Form  text={data.text} />
             <button 
                 onClick={() => setData({
-                    mail: {
-                        name: "name@example.com"
-                    },
-                    text: 'some text'
+                    mail: 'secondname@example.com',
+                    text: 'some text',
+                    forceChangeMail: forceChangeMail
                 })} >
                 Click me
             </button>
-        </>
+        </Provider>
     );
 }
 
